@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+	.container {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      input[type="file"] {
+        position: absolute;
+        z-index: -1;
+        top: 10px;
+        left: 8px;
+        font-size: 17px;
+        color: #b8b8b8;
+        margin-left: 1.9rem;
+      }
+
+      .button-wrap {
+        position: relative;
+        margin: 0.5rem auto;
+        margin-left: calc(50% - 115px);
+        overflow: ;
+      }
+
+      .button {
+        display: inline-block;
+		padding: 12px 18px;
+		cursor: pointer;
+		border-radius: 5px;
+		background-color: #046097;
+		font-size: 16px;
+		font-weight: bold;
+		color: #fff;
+		font-family: sans-serif;
+      }
+
+      .btn-secondary {
+      	background-color: black;
+      }
+
+      .button:hover {
+      	background-color: #024268
+      }
+
+      .textBody {
+      	padding: 0.5rem;
+				background-color: #efefef;
+				font-family: Arial;
+      }
+</style>
+
+</head>
+<body>
+
+<center>
+
+	<div class="container">
+      <div class="button-wrap">
+        <label class="button" for="fileName">Upload File</label>
+        <input id="fileName" type="file">
+      </div>
+    </div>
+    <br>
+	<button class="button" onClick="genName()">Click here to generate the text</button>
+	<br>
+	<article>
+	<p class="textBody" id="outputText" disabled style="border:1px solid grey;">
+		text...
+	</p>
+	<canvas id="pdf-canvas" width="400"></canvas>
+	</article>
+</center>
+
+<script>
+	//src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.943/pdf.min.js">
+	src="./p.min.js"
+</script>
+
+<script>
+
+function genName(){
+	let fileName=document.getElementById('fileName');
+	let outputText=document.getElementById('outputText');
+
+	file = fileName.files[0];
+	fileName = file.name;
+	outputText.innerHTML = 'Loading text...';
+	console.log(file)
+	typeof file;
+
+	fileNameEnding = fileName.split('').splice(-3).join(''); 
+
+	if (fileNameEnding == "txt"){
+		
+		outputText.innerHTML ="Text file detected. Loading, please wait...";
+		
+		setTimeout( readFile, 2000);
+		
+		function readFile(){
+			let fr = new FileReader();
+			fr.onload=function(){
+				outputText.innerHTML = fr.result;
+			}
+			fr.readAsText(file);
+		}
+
+	}
+
+	else if (fileNameEnding == "pdf"){
+
+		//placeholder
+		outputText.innerHTML = 'Pdf detected, but function not yet implemented';
+
+	}
+
+	else {
+		outputText.innerHTML ='Please select a different text file';
+	}
+	
+}
+</script>
+
+</body>
+</html>
