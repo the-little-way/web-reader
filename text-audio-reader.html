@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <style>
 	.container {
@@ -52,32 +52,32 @@
 				font-family: Arial;
       }
 </style>
+<script	src="./pdf.js"></script>
+<script src="./pdf.worker.js"></script>
 
 </head>
 <body>
+<section>
+	<center>
 
-<center>
+		<div class="container">
+	      <div class="button-wrap">
+	        <label class="button" for="fileName">Upload File</label>
+	        <input id="fileName" type="file">
+	      </div>
+	    </div>
+	    <br>
+		<button class="button" onClick="genName()">Click here to generate the text</button>
+		<br>
+		<article>
+		<p class="textBody" id="outputText" disabled style="border:1px solid grey;">
+			text...
+		</p>
+		<canvas id="pdf-canvas" width="400"></canvas>
+		</article>
+	</center>
+</section>
 
-	<div class="container">
-      <div class="button-wrap">
-        <label class="button" for="fileName">Upload File</label>
-        <input id="fileName" type="file">
-      </div>
-    </div>
-    <br>
-	<button class="button" onClick="genName()">Click here to generate the text</button>
-	<br>
-	<article>
-	<p class="textBody" id="outputText" disabled style="border:1px solid grey;">
-		text...
-	</p>
-	<canvas id="pdf-canvas" width="400"></canvas>
-	</article>
-</center>
-
-<script
-	src="./p.min.js">
-</script>
 
 <script>
 
@@ -111,13 +111,47 @@ function genName(){
 
 	else if (fileNameEnding == "pdf"){
 
-		//placeholder
-		outputText.innerHTML = 'Pdf detected, but function not yet implemented';
+		//var blob = new Blob([file.$binary], { type: 'application/pdf' });
+		//let pdf_url = URL.createObjectURL(blob);
+		//let pdf_url = 'C:/Users/...';
+		let pdf_url = `./${fileName}`
+
+		console.log(pdf_url, "checking");
+		var pdf_doc;
+		let page_no = 1;
+		_CANVAS = document.querySelector('#pdf-canvas');
+
+		showPDF()
+		
+		// initialize pdf file
+		async function showPDF() {
+
+			pdf_doc = await pdfjsLib.getDocument({ url: "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" });
+
+			showPage(page_no);
+
+		}
+
+		// load and render specific page of the PDF
+		async function showPage(page_no) {
+			_PAGE_RENDERING_IN_PROGRESS = 1;
+			_CURRENT_PAGE = page_no;
+
+			var page = await pdf_doc.getPage(page_no);alert(pdf_doc.numPages);
+
+			var render_context = {
+        canvasContext: _CANVAS.getContext('2d'),
+        viewport: viewport
+    	};
+
+			await page.render(render_context);
+
+		}
 
 	}
 
 	else {
-		outputText.innerHTML ='Please select a different text file';
+		outputText.innerHTML ='Please select a different text file'
 	}
 	
 }
